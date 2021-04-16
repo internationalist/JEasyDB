@@ -1,4 +1,4 @@
-package org.aguntuk.jeasydb;
+package org.aguntuk.legacy;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
@@ -6,7 +6,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aguntuk.jeasydb.JEasyDB.PARAMTYPE;
+import org.aguntuk.legacy.JEasyDB.PARAMTYPE;
 
 public enum StoredProcParamPlumber {
 	instance;

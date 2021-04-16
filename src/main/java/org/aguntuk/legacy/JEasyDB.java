@@ -1,4 +1,4 @@
-package org.aguntuk.jeasydb;
+package org.aguntuk.legacy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.CallableStatement;
@@ -21,14 +21,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.aguntuk.jeasydb.utils.DBSpecificSQLFrags;
-import org.aguntuk.jeasydb.utils.DBTypes;
+import org.aguntuk.jeasydb.v2.utils.DynamicSQLUtil;
+import org.aguntuk.jeasydb.v2.utils.InsertReturn;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 
+@Deprecated
 public class JEasyDB {
 	private static final Logger logger = Logger.getLogger(JEasyDB.class);
 	private PropertyUtilsBean propertyUtils;
@@ -253,13 +254,13 @@ public class JEasyDB {
 		return rows;
 	}
 	
-	public int persistMap(String tableName, 
+	public long persistMap(String tableName, 
 			Map<String, Object> valueMap) throws Exception {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
 		return persist(tableName, valueMap, sb);
 	}
 
-	private int persist(String tableName, Map<String, Object> valueMap, StringBuffer sb)
+	private long persist(String tableName, Map<String, Object> valueMap, StringBuffer sb)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SQLException {
 		StringBuffer values = new StringBuffer(" VALUES (");
 		sb.append(tableName).append(" (");
@@ -268,31 +269,31 @@ public class JEasyDB {
 		return ir.generatedKey;
 	}
 	
-	public int mergeMap(String tableName, 
+	public long mergeMap(String tableName, 
 			Map<String, Object> valueMap, DBTypes dbType) throws Exception {
 		StringBuffer sb = new StringBuffer(DBSpecificSQLFrags.instance.getMergeFrag(dbType));
 		return persist(tableName, valueMap, sb);
 	}	
 
-	public <T> int persistObject(String tableName, T bean,
+	public <T> long persistObject(String tableName, T bean,
 			Map<String, String> propertyMapper) throws Exception {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
 		return persist(tableName, bean, propertyMapper, sb);
 	}
 	
-	public <T> int persistIgnoreObject(String tableName, T bean,
+	public <T> long persistIgnoreObject(String tableName, T bean,
 			Map<String, String> propertyMapper) throws Exception {
 		StringBuffer sb = new StringBuffer("INSERT or ignore INTO ");
 		return persist(tableName, bean, propertyMapper, sb);
 	}	
 	
-	public <T> int mergeObject(String tableName, T bean,
+	public <T> long mergeObject(String tableName, T bean,
 			Map<String, String> propertyMapper, DBTypes dbType) throws Exception {
 		StringBuffer sb = new StringBuffer(DBSpecificSQLFrags.instance.getMergeFrag(dbType));
 		return persist(tableName, bean, propertyMapper, sb);
 	}
 
-	private <T> int persist(String tableName, T bean, Map<String, String> propertyMapper, StringBuffer sb)
+	private <T> long persist(String tableName, T bean, Map<String, String> propertyMapper, StringBuffer sb)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SQLException {
 		StringBuffer values = new StringBuffer(" VALUES (");
 		sb.append(tableName).append(" (");

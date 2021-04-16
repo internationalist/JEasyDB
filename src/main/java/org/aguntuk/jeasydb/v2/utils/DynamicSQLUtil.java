@@ -1,4 +1,4 @@
-package org.aguntuk.jeasydb;
+package org.aguntuk.jeasydb.v2.utils;
 
 import java.util.HashMap;
 import java.util.Map;

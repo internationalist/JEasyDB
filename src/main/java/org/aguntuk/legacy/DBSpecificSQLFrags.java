@@ -1,4 +1,4 @@
-package org.aguntuk.jeasydb.utils;
+package org.aguntuk.legacy;
 
 public enum DBSpecificSQLFrags {
 	instance;

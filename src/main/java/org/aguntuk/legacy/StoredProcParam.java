@@ -1,4 +1,4 @@
-package org.aguntuk.jeasydb;
+package org.aguntuk.legacy;
 
 public interface StoredProcParam {
 	public static final int IN = 1;
