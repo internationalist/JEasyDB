@@ -24,8 +24,8 @@ import org.apache.commons.beanutils.PropertyUtilsBean;
 public class DataObjectWriter extends AbstractData {
 	
 	
-	public DataObjectWriter() {
-		super();
+	public DataObjectWriter(DBTYPE dbType) {
+		super(dbType);
 	}	
 	
 	public <T> long persist(String tableName, T bean)
@@ -39,7 +39,7 @@ public class DataObjectWriter extends AbstractData {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SQLException {
 		StringBuffer values = new StringBuffer(" VALUES (");
 		StringBuffer sb = new StringBuffer(tableName).append(" (");
-		List<Object> bindVars = generateBindVars(bean, propertyMapper, sb, values);
+		List<Object> bindVars = generateBindVars(bean, propertyMapper, sb, values, this.dbType);
 		InsertReturn ir = execute(conn, sb, values, bindVars);
 		return ir.generatedKey;
 	}

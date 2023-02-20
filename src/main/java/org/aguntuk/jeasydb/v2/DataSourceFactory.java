@@ -13,17 +13,17 @@ i;
 	Connection conn;
 	Properties props;
 	private DataSourceFactory() {
-		setup();
-	}
-	private void setup() {
 		props = new Properties();
 		try {
 			props.load(ClassLoader.getSystemResourceAsStream("db.ini"));
-			conn = createConnection(i.props);
+			conn = createConnection(props);
 			conn.setAutoCommit(true);
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
-		}		
+		}	
+	}
+	private void setup() {
+	
 	}
 	
 	public static Connection getConnection() {
@@ -44,7 +44,7 @@ i;
 		ds.setDriverClassName(props.getProperty("DB_DRIVER_CLASS"));
 		ds.setUrl(props.getProperty("DB_URL"));
 		if(props.getProperty("DB_USERNAME") != null) {
-			ds.setUsername(i.props.getProperty("DB_USERNAME"));
+			ds.setUsername(props.getProperty("DB_USERNAME"));
 		}
 		if(props.getProperty("DB_PASSWORD") != null) {			
 			ds.setPassword(props.getProperty("DB_PASSWORD"));

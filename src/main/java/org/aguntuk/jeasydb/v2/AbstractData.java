@@ -15,9 +15,12 @@ import org.aguntuk.jeasydb.v2.utils.InsertReturn;
 public class AbstractData {
 
 	protected Connection conn;
+	public static enum DBTYPE {oracle, mysql, sqlite}
+	protected DBTYPE dbType;
 
-	public AbstractData() {
+	public AbstractData(DBTYPE dbType) {
 		conn = DataSourceFactory.getConnection();
+		this.dbType = dbType;
 	}
 	
 	public String generateDynamicSQL(String sql, Map<String, Object> dynamicSQLargs, Map<String, Integer> bindCountMap) {

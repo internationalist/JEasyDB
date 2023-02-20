@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aguntuk.jeasydb.v2.AbstractData;
+import org.aguntuk.jeasydb.v2.AbstractData.DBTYPE;
 import org.aguntuk.jeasydb.v2.BiDiMap;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -178,7 +181,7 @@ public enum GeneralUtils {
 	}	
 	
 	public static <T> List<Object> generateBindVars(T bean, Map<String, String> propertyMapper,
-			StringBuffer sb, StringBuffer values)
+			StringBuffer sb, StringBuffer values, AbstractData.DBTYPE dbType)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		List<Object> bindVars = new ArrayList<>();		
 		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");		
@@ -190,10 +193,19 @@ public enum GeneralUtils {
 				sb.append(propertyMapper.get(propName)).append(",");
 				Class<?> propType = I.propertyUtils.getPropertyType(bean,
 						propName);
-				if ("Calendar".equalsIgnoreCase(propType.getSimpleName())) {
+				if (propType.getSimpleName().indexOf("Calendar") > -1) {
 					Calendar timeValue = (Calendar) value;
 					String timeValueStr = df.format(timeValue.getTime());
-					values.append("TO_DATE(?, 'YYYYMMDDHH24MISS'),");
+					switch(dbType) {
+						case mysql:
+							values.append("STR_TO_DATE(?, '%Y%m%d%h%i%s'),");
+							break;
+						case oracle:
+							values.append("TO_DATE(?, 'YYYYMMDDHH24MISS'),");							
+							break;
+						case sqlite:
+							break;
+					}
 					bindVars.add(timeValueStr);
 				} else {
 					values.append("?,");
@@ -205,7 +217,7 @@ public enum GeneralUtils {
 	}
 	
 	public static List<Object> generateBindVars(Map<String, Object> valueMap,
-			StringBuffer sb, StringBuffer values)
+			StringBuffer sb, StringBuffer values, AbstractData.DBTYPE dbType)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		List<Object> bindVars = new ArrayList<>();		
 		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");		
@@ -216,10 +228,19 @@ public enum GeneralUtils {
 			if (value != null) {
 				sb.append(propName).append(",");
 				Class<?> propType = value.getClass();
-				if ("Calendar".equalsIgnoreCase(propType.getSimpleName())) {
+				if (propType.getSimpleName().indexOf("Calendar") > -1) {				
 					Calendar timeValue = (Calendar) value;
 					String timeValueStr = df.format(timeValue.getTime());
-					values.append("TO_DATE(?, 'YYYYMMDDHH24MISS'),");
+					switch(dbType) {
+						case mysql:
+							values.append("STR_TO_DATE(?, '%Y%m%d%H%i%s'),");
+							break;
+						case oracle:
+							values.append("TO_DATE(?, 'YYYYMMDDHH24MISS'),");							
+							break;
+						case sqlite:
+							break;
+					}
 					bindVars.add(timeValueStr);
 				} else {
 					values.append("?,");
@@ -258,7 +279,7 @@ public enum GeneralUtils {
 		String sqlB = values.substring(0, values.lastIndexOf(",")) + ")";
 		StringBuffer params = new StringBuffer();
 		System.out.println("SQL is " + sqlA + sqlB);
-		PreparedStatement ps = conn.prepareStatement(sqlA + sqlB);
+		PreparedStatement ps = conn.prepareStatement(sqlA + sqlB, Statement.RETURN_GENERATED_KEYS);
 		for(int i = 0; i < bindVars.size(); i++) {
 			bindPreparedStatement(i, bindVars.get(i), ps);
 			params.append(bindVars.get(i)).append(",");

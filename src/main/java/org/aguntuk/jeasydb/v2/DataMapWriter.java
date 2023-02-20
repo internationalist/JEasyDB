@@ -12,6 +12,9 @@ import org.aguntuk.jeasydb.v2.utils.InsertReturn;
 
 public class DataMapWriter extends AbstractData {
 	
+	public DataMapWriter(DBTYPE dbType) {
+		super(dbType);
+	}	
 	public long persistMap(String tableName, 
 			Map<String, Object> valueMap) throws Exception {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
@@ -22,7 +25,7 @@ public class DataMapWriter extends AbstractData {
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SQLException {
 		StringBuffer values = new StringBuffer(" VALUES (");
 		sb.append(tableName).append(" (");
-		List<Object> bindVars = generateBindVars(valueMap, sb, values);
+		List<Object> bindVars = generateBindVars(valueMap, sb, values, this.dbType);
 		InsertReturn ir = execute(conn, sb, values, bindVars);
 		return ir.generatedKey;
 	}

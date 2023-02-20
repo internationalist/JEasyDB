@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class DataObjectReader extends AbstractData {
 	
-	public DataObjectReader() {
-		super();
+	public DataObjectReader(DBTYPE dbType) {
+		super(dbType);
 	}
 	
 	public <T> List<T> load(String sql, Class<T> bean,

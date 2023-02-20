@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 public class DataMapReader extends AbstractData {
+	
+	public DataMapReader(DBTYPE dbType) {
+		super(dbType);
+	}	
 
 	public List<Map<String, Object>> loadMap(String sql,
 			Map<String, Class<? extends Object>> columnValue, Object... sqlArgs) throws SQLException {
