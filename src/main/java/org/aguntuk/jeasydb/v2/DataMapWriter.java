@@ -21,11 +21,14 @@ public class DataMapWriter extends AbstractData {
 		return persist(tableName, valueMap, sb);
 	}	
 	
-	private long persist(String tableName, Map<String, Object> valueMap, StringBuffer sb)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SQLException {
+	private long persist(String tableName, Map<String, Object> valueMap,
+						 StringBuffer sb)
+			throws IllegalAccessException, InvocationTargetException,
+				   NoSuchMethodException, SQLException {
 		StringBuffer values = new StringBuffer(" VALUES (");
 		sb.append(tableName).append(" (");
-		List<Object> bindVars = generateBindVars(valueMap, sb, values, this.dbType);
+		List<Object> bindVars = generateBindVars(valueMap, sb, values,
+												 this.dbType);
 		InsertReturn ir = execute(conn, sb, values, bindVars);
 		return ir.generatedKey;
 	}
